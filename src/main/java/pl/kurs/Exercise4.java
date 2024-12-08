@@ -27,7 +27,7 @@ public class Exercise4 {
                 int[] intArray = new int[stringArray.length];
 
                 for (int i = 0; i < stringArray.length; i++) {
-                    intArray[i] = Integer.valueOf(stringArray[i]);
+                    intArray[i] = Integer.parseInt(stringArray[i]);
                 }
                 System.out.println("stringArray = " + Arrays.toString(stringArray));
                 System.out.println("Monotoniczność : " + testIntArrayMonotonic(intArray));
