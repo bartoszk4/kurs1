@@ -19,55 +19,56 @@ public class Exercise3 {
 //        array = superPrimesGeneratorFromRange(5000, 9967);
         array = superPrimesGeneratorFromRange(5000, 60_000);
 //        array = superPrimesGeneratorFromRange(0, 100);
+//        array = superPrimesGeneratorFromRange(0, 100);
+//        array = superPrimesGeneratorFromRange(0, -1);
 
         System.out.println(Arrays.toString(array));
         System.out.println("Liczba liczb super pierwszych w podanym przedziale = " + array.length);
     }
 
-    static int[] superPrimesGeneratorFromRange(int from, int to) {
-        if (from > to || from < 0 || to < 0) {
-            System.out.println("Błędne dane wejściowe");
-            return null;
-        }
+    public static int[] superPrimesGeneratorFromRange(int from, int to) {
+        if (checkForWrongInputs(from, to)) return new int[0];
 
+        return convertIntegerListToArray(getPrimeNumbersWithPrimeSumOfDigits(from, to));
+    }
+
+    private static List<Integer> getPrimeNumbersWithPrimeSumOfDigits(int from, int to) {
         List<Integer> primesList = new ArrayList<>();
 
-        if ((from <= 2) && (2 <= to)) {
-            primesList.add(2);
+        addNumber2And3IfTheyAreInRange(from, to, primesList);
+
+        int[] result = setUpFirstNumbers(from);
+
+        int number1 = result[0];
+        int number2 = result[1];
+        int k = result[2];
+
+        while (number2 <= to && (number1 <= to || number2 >= from)) {
+            if (number2 >= from && numberIsPrime(number2) && sumOfDigitsIsPrime(number2)) {
+                primesList.add(number2);
+            }
+            if (number1 <= to && numberIsPrime(number1) && sumOfDigitsIsPrime(number1)) {
+                primesList.add(number1);
+            }
+            k++;
+            number1 = 6 * k + 1;
+            number2 = number1 - 2;
         }
-        if ((from <= 3) && (3 <= to)) {
-            primesList.add(3);
-        }
+        return primesList;
+    }
+
+    private static int[] setUpFirstNumbers(int from) {
         int minNumber = Math.max(from, 5);
         int k = minNumber / 6;
-        int tempNumber1 = 6 * k + 1;
+        int number1 = 6 * k + 1;
 
-        if (tempNumber1 <= minNumber) {
+        if (number1 <= minNumber) {
             k++;
-            tempNumber1 = 6 * k + 1;
+            number1 = 6 * k + 1;
         }
-        int tempNumber2 = tempNumber1 - 2;
+        int number2 = number1 - 2;
 
-        while (tempNumber2 <= to && (tempNumber1 <= to || tempNumber2 >= from)) {
-            if (tempNumber2 >= from && numberIsPrime(tempNumber2) && sumOfDigitsIsPrime(tempNumber2)) {
-                primesList.add(tempNumber2);
-            }
-            if (tempNumber1 <= to && numberIsPrime(tempNumber1) && sumOfDigitsIsPrime(tempNumber1)) {
-                primesList.add(tempNumber1);
-            }
-            k++;
-            tempNumber1 = 6 * k + 1;
-            tempNumber2 = tempNumber1 - 2;
-        }
-
-        int[] primesArray = new int[primesList.size()];
-
-        if (!primesList.isEmpty()) {
-            for (int i = 0; i < primesList.size(); i++) {
-                primesArray[i] = primesList.get(i);
-            }
-        }
-        return primesArray;
+        return new int[]{number1, number2, k};
     }
 
     static boolean sumOfDigitsIsPrime(int number) {
@@ -93,5 +94,32 @@ public class Exercise3 {
             }
         }
         return true;
+    }
+
+    private static boolean checkForWrongInputs(int from, int to) {
+        if (from > to || from < 0 || to < 0) {
+            System.out.println("Błędne dane wejściowe");
+            return true;
+        }
+        return false;
+    }
+
+    private static int[] convertIntegerListToArray(List<Integer> primesList) {
+        int[] primesArray = new int[primesList.size()];
+        if (!primesList.isEmpty()) {
+            for (int i = 0; i < primesList.size(); i++) {
+                primesArray[i] = primesList.get(i);
+            }
+        }
+        return primesArray;
+    }
+
+    private static void addNumber2And3IfTheyAreInRange(int from, int to, List<Integer> primesList) {
+        if ((from <= 2) && (2 <= to)) {
+            primesList.add(2);
+        }
+        if ((from <= 3) && (3 <= to)) {
+            primesList.add(3);
+        }
     }
 }
