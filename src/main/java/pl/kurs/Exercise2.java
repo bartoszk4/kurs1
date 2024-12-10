@@ -25,7 +25,7 @@ public class Exercise2 {
 
     public static String getSequenceName(int[] sequence) {
 
-        if (sequence.length <= 2) return "ARYTMETYCZNY" + '\n' + "GEOMETRYCZNY";
+        if (checkIfArrayIsShortenOrEqualsTwo(sequence.length)) return "ARYTMETYCZNY" + '\n' + "GEOMETRYCZNY";
 
         boolean isArithmetic = true;
         boolean isGeometric = true;
@@ -34,30 +34,54 @@ public class Exercise2 {
         float q = 0;
 
         if (sequence[0] == 0) {
-            for (int i : sequence) {
-                if (i != 0) {
-                    isGeometric = false;
-                    break;
-                }
+            if (checkIfWholeArrayIsZero(sequence)) {
+                return "ARYTMETYCZNY" + '\n' + "GEOMETRYCZNY";
+            } else {
+                isGeometric = false;
             }
-            if (isGeometric) return "ARYTMETYCZNY" + '\n' + "GEOMETRYCZNY";   // tylko zera w tablicy
         } else {
             q = (float) sequence[1] / sequence[0];
         }
 
-        for (int i = 2; i < sequence.length; i++) {
-            if (sequence[i] - sequence[i - 1] != r) isArithmetic = false;
+        boolean[] result = isArithmeticOrGeometric(r, q, isGeometric, sequence);
+        isArithmetic = result[0];
+        isGeometric = result[1];
 
-            if (isGeometric) {
+        return getSequenceType(isArithmetic, isGeometric);
+    }
+
+    static boolean[] isArithmeticOrGeometric(float r, float q, boolean isGeometric, int[] sequence) {
+        boolean arithmetic = true;
+        boolean geometric = isGeometric;
+
+        for (int i = 2; i < sequence.length; i++) {
+            if (sequence[i] - sequence[i - 1] != r) arithmetic = false;
+            if (geometric) {
                 if (sequence[i - 1] != 0) {
-                    if ((float) sequence[i] / sequence[i - 1] != q) isGeometric = false;
+                    if ((float) sequence[i] / sequence[i - 1] != q) geometric = false;
                 } else {
-                    if (sequence[i] != 0) isGeometric = false;
+                    if (sequence[i] != 0) geometric = false;
                 }
             }
-            if (!isArithmetic && !isGeometric) break;
+            if (!arithmetic && !geometric) break;
         }
+        return new boolean[]{arithmetic, geometric};
+    }
 
+    static boolean checkIfWholeArrayIsZero(int[] sequence) {
+        for (int i = 1; i < sequence.length; i++) {
+            if (sequence[i] != 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    static boolean checkIfArrayIsShortenOrEqualsTwo(int length) {
+        return length <= 2;
+    }
+
+    static String getSequenceType(boolean isArithmetic, boolean isGeometric) {
         if (isArithmetic || isGeometric) {
             if (isArithmetic) {
                 String text = "ARYTMETYCZNY";
@@ -71,4 +95,5 @@ public class Exercise2 {
         }
         return "INNY";
     }
+
 }
